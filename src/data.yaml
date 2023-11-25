@@ -1,17 +1,17 @@
 ---
 aspects:
-  - Blood
-  - Breath
   - Time
   - Space
-  - Light
-  - Void
-  - Doom
-  - Life
   - Heart
   - Mind
-  - Rage
   - Hope
+  - Rage
+  - Light
+  - Void
+  - Breath
+  - Blood
+  - Life
+  - Doom
 classes:
   - Thief
   - Rogue
@@ -76,7 +76,7 @@ class_rel:
     - Heir
     - Maid
     - Page
-  wielder:
+  user:
     - Knight
     - Sylph
     - Prince

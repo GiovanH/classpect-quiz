@@ -22,8 +22,8 @@
       <label :key="model" v-for="desc, model in {
         'user': `You <b>use</b> ${aspect_desc.toLowerCase()}`,
         'tool': `You <b>are used by</b> ${aspect_desc.toLowerCase()}`,
-        'subject': `You <b>act on</b> ${aspect_desc.toLowerCase()}`,
-        'object': `You <b>are acted on by</b> ${aspect_desc.toLowerCase()}`
+        'subject': `You <b>change</b> ${aspect_desc.toLowerCase()}`,
+        'object': `You <b>are changed by</b> ${aspect_desc.toLowerCase()}`
       }">
         <input type="checkbox"
           :checked.prop="relationship == model"
@@ -52,9 +52,9 @@
     </p>
     <div class="col">
       <label :key="model" v-for="desc, model in {
-        'intrinsic': `Intrinsic, introverted, advancing one's own goals. Advancing my goals advances the narrative's goals.`,
-        'extrinsic': `Extrinsic, extroverted, advancing the goals of others. I advance the goals of others to advance the narrative's goals.`,
-        'victim': `For/at the expense of the narrative, or a higher power. The narrative advances its goals by actively acting in my detriment.`
+        'intrinsic': `For your own advancement. Advancing my goals advances the narrative's goals.`,
+        'extrinsic': `For the advancement of others. I advance the goals of others to advance the narrative's goals.`,
+        'victim': `For/at the advancement of the narrative. The narrative advances its goals by actively acting in my detriment.`
       }">
         <input type="checkbox"
           :checked.prop="nature == model"
@@ -64,7 +64,7 @@
         {{ desc }}
       </label>
       <label :key="model" v-for="desc, model in {
-        'self': `For both the self and the narrative as one, inseperable. My goals and the narrative's are inseperable. We are codependent on each other.`
+        'self': `For the advancement of both the self and the narrative as one. My goals and the narrative's are inseperable. We are codependent on each other.`
       }">
         <input type="checkbox"
           :checked.prop="nature == model"
@@ -76,22 +76,25 @@
     </div>
   </div>
 
-  <pre v-text="{theme_rating, relationship, nature, aspect_pick, score_rating, class_pick}" />
+  <!-- <pre v-text="{theme_rating, relationship, nature, aspect_pick, score_rating, class_pick}" /> -->
   <div v-if="aspect_pick && class_pick">
-    <span v-text="confidence" /> <span v-text="class_pick" /> of <span v-text="aspect_pick" />
+    <ClasspectDisplay :class="class_pick" :aspect="aspect_pick" />
   </div>
 </template>
 
 <script>
 
 import data from "@/data.yaml";
+import ClasspectDisplay from "@/components/ClasspectDisplay.vue"
 
 export default {
   name: 'AspectQuiz',
+  components: { ClasspectDisplay },
   props: [ 'theme' ],
   emits: [ 'aspectSet', 'classSet', 'confidenceSet' ],
   data: function() {
     return {
+      data,
       theme_rating: 2,
       relationship: undefined,
       nature: undefined,
@@ -118,7 +121,7 @@ export default {
       var rel_opts = data.class_rel[this.relationship] || []
       var filtered = nature_opts.filter(a => rel_opts.includes(a))
       console.log(rel_opts, nature_opts, filtered)
-      return filtered[0] || "Lack"
+      return filtered[0] || undefined
     },
     masterclass_nature() {
       if (this.nature == "self") return true

@@ -7,6 +7,7 @@ import ViteYaml from '@modyfi/vite-plugin-yaml';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: '/classpect',
   plugins: [
     vue(),
     ViteYaml(), // you may configure the plugin by passing in an object with the options listed below
