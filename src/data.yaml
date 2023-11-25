@@ -1,0 +1,106 @@
+---
+aspects:
+  - Blood
+  - Breath
+  - Time
+  - Space
+  - Light
+  - Void
+  - Doom
+  - Life
+  - Heart
+  - Mind
+  - Rage
+  - Hope
+classes:
+  - Thief
+  - Rogue
+  - Heir
+  - Knight
+  - Seer
+  - Mage
+  - Maid
+  - Sylph
+  - Bard
+  - Witch
+  - Page
+  - Prince
+  - Lord
+  - Muse
+
+aspect_pairs:
+  meaning:
+  - Blood
+  - Breath
+  growth:
+  - Time
+  - Space
+  truth:
+  - Light
+  - Void
+  fortune:
+  - Doom
+  - Life
+  identity:
+  - Heart
+  - Mind
+  fiction:
+  - Rage
+  - Hope
+
+aspects_meaning:
+  - Blood
+  - Breath
+  - Light
+  - Void
+  - Heart
+  - Mind
+aspects_material:
+  - Time
+  - Space
+  - Doom
+  - Life
+  - Rage
+  - Hope
+
+class_rel:
+  object:
+    - Thief
+    - Seer
+    - Bard
+  subject:
+    - Rogue
+    - Mage
+    - Witch
+  tool:
+    - Heir
+    - Maid
+    - Page
+  wielder:
+    - Knight
+    - Sylph
+    - Prince
+  subsumer:
+    - Lord
+  subsumee:
+    - Muse
+
+class_nature:
+  intrinsic:
+    - Thief
+    - Rogue
+    - Heir
+    - Knight
+  extrinsic:
+    - Seer
+    - Mage
+    - Maid
+    - Sylph
+  victim:
+    - Bard
+    - Witch
+    - Page
+    - Prince
+  self:
+    - Lord
+    - Muse
