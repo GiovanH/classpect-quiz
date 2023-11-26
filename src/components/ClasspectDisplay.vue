@@ -1,11 +1,11 @@
 <template>
   <div class="column">
-    <span class="row" v-if="big != undefined">
+    <span class="row" v-if="big">
       <img :src="`./aspect/aspect_${data.aspects.indexOf(aspect) + 1}.png`" />
       <img :src="`./classsprites/${c}_template.png`" />
     </span>
     <span>
-      <img v-if="big == undefined" :src="`./icons/icon_aspect_${data.aspects.indexOf(aspect) + 1}.png`" />
+      <img v-if="!big" :src="`./icons/icon_aspect_${data.aspects.indexOf(aspect) + 1}.png`" />
       <span v-text="c" /> of <span v-text="aspect" />
     </span>
   </div>

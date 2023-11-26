@@ -48,35 +48,46 @@ aspect_pairs:
   - Rage
   - Hope
 
-aspects_meaning:
-  - Blood
-  - Breath
-  - Light
-  - Void
-  - Heart
-  - Mind
-aspects_material:
+aspect_direction:
+  contract:
   - Time
-  - Space
+  - Blood
+  - Light
   - Doom
-  - Life
+  - Heart
   - Rage
+  expand:
+  - Breath
+  - Space
+  - Void
+  - Life
+  - Mind
   - Hope
 
+abstract_bisect:
+  The Abstract:
+    - meaning
+    - truth
+    - identity
+  The Material:
+    - growth
+    - fortune
+    - fiction
+
 class_rel:
-  object:
+  student:
     - Thief
     - Seer
     - Bard
-  subject:
+  alterant:
     - Rogue
     - Mage
     - Witch
-  tool:
+  agent:
     - Heir
     - Maid
     - Page
-  user:
+  operant:
     - Knight
     - Sylph
     - Prince
@@ -84,6 +95,17 @@ class_rel:
     - Lord
   subsumee:
     - Muse
+
+aspect_nature:
+  instrumental:
+    - meaning
+    - growth
+  fundamental:
+    - truth
+    - fortune
+  delinquent:
+    - identity
+    - fiction
 
 class_nature:
   intrinsic:

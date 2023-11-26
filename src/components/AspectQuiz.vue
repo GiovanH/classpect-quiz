@@ -20,10 +20,10 @@
     </p>
     <div class="col">
       <label :key="model" v-for="desc, model in {
-        'user': `You <b>use</b> ${aspect_desc.toLowerCase()}`,
-        'tool': `You <b>are used by</b> ${aspect_desc.toLowerCase()}`,
-        'subject': `You <b>change</b> ${aspect_desc.toLowerCase()}`,
-        'object': `You <b>are changed by</b> ${aspect_desc.toLowerCase()}`
+        'operant': `You <b>use</b> ${aspect_desc.toLowerCase()}`,
+        'agent': `You <b>are used by</b> ${aspect_desc.toLowerCase()}`,
+        'alterant': `You <b>change</b> ${aspect_desc.toLowerCase()}`,
+        'student': `You <b>are changed by</b> ${aspect_desc.toLowerCase()}`
       }">
         <input type="checkbox"
           :checked.prop="relationship == model"
@@ -51,34 +51,29 @@
       ...in a way that is:
     </p>
     <div class="col">
-      <label :key="model" v-for="desc, model in {
-        'intrinsic': `For your own advancement. Advancing my goals advances the narrative's goals.`,
-        'extrinsic': `For the advancement of others. I advance the goals of others to advance the narrative's goals.`,
-        'victim': `For/at the advancement of the narrative. The narrative advances its goals by actively acting in my detriment.`
-      }">
+      <label :key="model" v-for="model in [ 'intrinsic', 'extrinsic', 'victim' ]">
         <input type="checkbox"
           :checked.prop="nature == model"
           :disabled="masterclass_rel === true"
           @click="nature != model ? nature = model : nature = undefined"
         />
-        {{ desc }}
+        {{ $t(`desc_${model}`) }}
       </label>
-      <label :key="model" v-for="desc, model in {
-        'self': `For the advancement of both the self and the narrative as one. My goals and the narrative's are inseperable. We are codependent on each other.`
-      }">
+      <label :key="model" v-for="model in [ 'self' ]">
         <input type="checkbox"
           :checked.prop="nature == model"
           :disabled="masterclass_rel === false"
           @click="nature != model ? nature = model : nature = undefined"
         />
-        {{ desc }}
+        {{ $t(`desc_${model}`) }}
       </label>
     </div>
   </div>
 
   <!-- <pre v-text="{theme_rating, relationship, nature, aspect_pick, score_rating, class_pick}" /> -->
-  <div v-if="aspect_pick && class_pick">
-    <ClasspectDisplay :class="class_pick" :aspect="aspect_pick" />
+  <div class="internal" v-if="aspect_pick && class_pick">
+    <ClasspectDisplay :class="class_pick" :aspect="aspect_pick" /> + {{confidence}}
+    <pre v-text="{aspect_pick, nature, relationship, class_pick}" />
   </div>
 </template>
 
@@ -91,25 +86,43 @@ export default {
   name: 'AspectQuiz',
   components: { ClasspectDisplay },
   props: [ 'theme' ],
-  emits: [ 'aspectSet', 'classSet', 'confidenceSet' ],
+  emits: [ 'changed' ],
   data: function() {
     return {
       data,
+      default: {
+        theme_rating: 2,
+        relationship: undefined,
+        nature: undefined,
+      },
       theme_rating: 2,
       relationship: undefined,
       nature: undefined,
     }
   },
   watch: {
-    aspect_pick(to) {
-      this.$emit('aspectSet', to)
-    },
-    class_pick(to) {
-      this.$emit('classSet', to)
-    },
-    confidence(to) {
-      this.$emit('confidenceSet', to)
-    },
+    overall_value: {
+      handler(to) {
+        this.$emit('changed', to)
+        this.save()
+      },
+      deep: true
+    }
+  },
+  created() {
+    let saved = this.Store[this.theme] || {}
+    this.relationship = saved.relationship || this.default.relationship
+    this.nature = saved.nature || this.default.nature
+    this.theme_rating = saved.theme_rating || this.default.theme_rating
+  },
+  methods: {
+    save() {
+      this.Store[this.theme] = {
+        relationship: this.relationship,
+        nature: this.nature,
+        theme_rating: this.theme_rating
+      }
+    }
   },
   computed: {
     aspect_pair() { return data.aspect_pairs[this.theme] || ['Null', 'Nil'] },
@@ -120,7 +133,6 @@ export default {
       var nature_opts = data.class_nature[this.nature] || []
       var rel_opts = data.class_rel[this.relationship] || []
       var filtered = nature_opts.filter(a => rel_opts.includes(a))
-      console.log(rel_opts, nature_opts, filtered)
       return filtered[0] || undefined
     },
     masterclass_nature() {
@@ -133,7 +145,15 @@ export default {
       else if (this.relationship) return false
       return undefined
     },
-    confidence() { return this.score_rating }
+    confidence() { return this.score_rating },
+    overall_value() {
+      return {
+        aspect: this.aspect_pick,
+        class: this.class_pick,
+        confidence: this.confidence,
+        valid: (this.aspect_pick && this.class_pick && true)
+      }
+    }
   },
 }
 </script>
