@@ -1,111 +1,57 @@
 <template>
-  <h1>Questions</h1>
-  <div class="quizContainer">
-    <div>
-      <p>
-        Which aspect theme is more important?
-      </p>
-      <div class="col">
-        <label v-for="(aspects, theme) in {...data.aspect_pairs, skip: []}" :key="theme">
-          <input type="radio"
-            :value="aspects"
-            v-model="tuning.bonus_aspects_subject"
-          />
-          <span v-text="$t(`theme_${theme}`)" />
-        </label>
-      </div>
-      <div class="internal">
-        + 1 {{ tuning.bonus_aspects_subject }}
+  <div :class="{hideInternal}">
+    <span>
+      based entirely on <a href="https://archiveofourown.org/series/1960270">0pacifica's classpect meta</a>
+    </span>
+    <h1>Questions</h1>
+    <div class="quizContainer">
+      <div v-for="(aspects, theme) in data.aspect_pairs" :key="theme">
+        <AspectQuiz
+          :theme="theme"
+          @changed="v => quiz_inputs[theme] = Object.freeze(v)"
+        />
       </div>
     </div>
-    <div>
-      <p>
-        Which aspect nature is more important to you?
-      </p>
-      <div class="col">
-        <label v-for="(themes, nature) in {...data.aspect_nature, skip: []}" :key="nature">
-          <input type="radio"
-            :value="themes"
-            v-model="tuning.bonus_themes_nature"
-          />
-          <span v-text="$t(`picker_${nature}`)" />
-        </label>
-      </div>
-      <div class="internal">
-        + 1 {{ tuning.bonus_themes_nature }}
-      </div>
-    </div>
-    <div>
-      <p>
-        Which aspect kind is more important to you?
-      </p>
-      <div class="col">
-        <label v-for="(aspects, kind) in {...data.abstract_bisect, '(skip)': []}" :key="kind">
-          <input type="radio"
-            :value="aspects"
-            v-model="tuning.bonus_aspects_abstract"
-          />
-          <span v-text="kind" />
-        </label>
-      </div>
-      <div class="internal">
-        + 1 {{ tuning.bonus_aspects_abstract }}
-      </div>
-    </div>
-    <div>
-      <p>
-        Which aspect kind is more important to you?
-      </p>
-      <div class="col">
-        <label :key="direction" v-for="(aspects, direction) in {...data.aspect_direction, skip: []}">
-          <input type="radio"
-            :value="aspects"
-            v-model="tuning.bonus_aspects_direction"
-          />
-          {{ $t(`desc_${direction}`) }}
-        </label>
-      </div>
-      <div class="internal">
-        + 1 {{ tuning.bonus_aspects_direction }}
-      </div>
-    </div>
-    <div>
-      <p>
-        Which class role fits you best?
-      </p>
-      <div class="col">
-        <label :key="nature" v-for="(classes, nature) in {...data.class_nature, skip: []}">
-          <input type="radio"
-            :value="classes"
-            v-model="tuning.bonus_classes_nature"
-          />
-          {{ $t(`desc_${nature}`) }}
-        </label>
-      </div>
-      <div class="internal">
-        + 1 {{ tuning.bonus_classes_nature }}
-      </div>
-    </div>
-  </div>
 
-  <div class="quizContainer">
-    <div v-for="(aspects, theme) in data.aspect_pairs" :key="theme">
-      <AspectQuiz
-        :theme="theme"
-        @changed="v => quiz_inputs[theme] = v"
+    <div class="quizContainer">
+      <template v-for="tunemodels, tunekey in tuningopts">
+        <div :key="model" v-for="model in tunemodels">
+          <p>
+            {{ $t(`tuningprompt_${model}`) }}
+          </p>
+          <div class="col">
+            <label v-for="(v, choice) in {...data[model], skip: []}" :key="choice">
+              <input type="radio"
+                :value="v"
+                v-model="tuning[model]"
+              />
+              <span v-text="$t(`tuningdesc_${choice}`)" />
+            </label>
+          </div>
+          <div class="internal">
+            + 1 {{ tuning[model] }}
+          </div>
+        </div>
+      </template>
+    </div>
+
+    <h1>Results</h1>
+    <ol>
+      <li v-for="(res, i) in quiz_inputs_sorted" :key="res.theme" >
+        {{ res.confidence }} points
+        <ClasspectDisplay :class="res.class" :aspect="res.aspect" :big="i == 0 ? true : null" />
+        <pre class="internal" v-text="res.log" />
+      </li>
+    </ol>
+    <!-- <pre class="internal" v-text="quiz_inputs_sorted" /> -->
+    <label>
+      <input type="checkbox"
+        v-model="hideInternal"
       />
-    </div>
+      Hide internal data
+    </label>
+    <button @click="cleardata">Clear all selections</button>
   </div>
-
-  <h1>Results</h1>
-  <h2>Main</h2>
-  <ol>
-    <li v-for="(res, i) in quiz_inputs_sorted" :key="res.theme" >
-      {{ res.confidence }} points
-      <ClasspectDisplay :class="res.class" :aspect="res.aspect" :big="i == 0 ? true : null" />
-    </li>
-  </ol>
-  <pre v-text="quiz_inputs_sorted" />
 </template>
 
 <style lang="scss">
@@ -119,6 +65,9 @@
 }
 .internal {
   border: 1px dotted grey;
+}
+.hideInternal .internal {
+  display: none;
 }
 .quizContainer {
   display: flex;
@@ -146,22 +95,51 @@ export default {
   components: { AspectQuiz, ClasspectDisplay },
   data: function() {
     return {
+      hideInternal: true,
       data: data,
       quiz_inputs: {},
-      tuning: {}
+      tuning: {},
+      tuningopts: {
+        aspectpairs: ['abstractpairs_abstraction', 'aspectpairs_nature'],
+        aspects: ['aspect_direction'],
+        classes: [], // 'class_rel', 'class_nature'
+        classrel: ['classrel_activity']
+      }
     }
   },
   computed: {
     quiz_inputs_sorted() {
-      return Object.entries(this.quiz_inputs)
-        .map(kv => ({theme: kv[0], ...kv[1]})) // shunt key into object
+      return Object.freeze(Object.values(this.quiz_inputs))
+        .flat()
+        // .map(kv => ({theme: kv[0], ...kv[1]})) // shunt key into object
         .filter(i => i.valid)
         .map(i => {
-          if (this.tuning.bonus_aspects_subject?.includes(i.theme)) { i.confidence += 1 }
-          if (this.tuning.bonus_aspects_abstract?.includes(i.aspect)) { i.confidence += 1 }
-          if (this.tuning.bonus_aspects_direction?.includes(i.aspect)) { i.confidence += 1 }
-          if (this.tuning.bonus_themes_nature?.includes(i.theme)) { i.confidence += 1 }
-          if (this.tuning.bonus_classes_nature?.includes(i.class)) { i.confidence += 1 }
+          i.confidence = i.aspect_confidence || 0
+          i.log = [`+${i.aspect_confidence} aspect confidence`]
+          this.tuningopts.aspectpairs.forEach(key => {
+            if (this.tuning[key]?.map(key => data.aspect_pairs[key]).flat().includes(i.aspect)) {
+              i.confidence += 1
+              i.log.push(`+1 ${key} (${this.tuning[key]})`)
+            }
+          })
+          this.tuningopts.aspects.forEach(key => {
+            if (this.tuning[key]?.includes(i.aspect)) {
+              i.confidence += 1
+              i.log.push(`+1 ${key} (${this.tuning[key]})`)
+            }
+          })
+          this.tuningopts.classes.forEach(key => {
+            if (this.tuning[key]?.includes(i.class)) {
+              i.confidence += 1
+              i.log.push(`+1 ${key} (${this.tuning[key]})`)
+            }
+          })
+          this.tuningopts.classrel.forEach(key => {
+            if (this.tuning[key]?.map(key => data.class_rel[key]).flat().includes(i.class)) {
+              i.confidence += 1
+              i.log.push(`+1 ${key} (${this.tuning[key]})`)
+            }
+          })
           return i
         })
         .toSorted((a, b) => (a.confidence || 0) - (b.confidence || 0))
@@ -169,7 +147,10 @@ export default {
     },
   },
   methods: {
-
+    cleardata() {
+      Object.keys(this.Store).forEach(k => this.Store[k] = undefined)
+      location.reload()
+    }
   },
   watch: {
     tuning: {

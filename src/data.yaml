@@ -12,21 +12,6 @@ aspects:
   - Blood
   - Life
   - Doom
-classes:
-  - Thief
-  - Rogue
-  - Heir
-  - Knight
-  - Seer
-  - Mage
-  - Maid
-  - Sylph
-  - Bard
-  - Witch
-  - Page
-  - Prince
-  - Lord
-  - Muse
 
 aspect_pairs:
   meaning:
@@ -48,6 +33,27 @@ aspect_pairs:
   - Rage
   - Hope
 
+abstractpairs_abstraction:
+  abstract:
+    - meaning
+    - truth
+    - identity
+  material:
+    - growth
+    - fortune
+    - fiction
+
+aspectpairs_nature:
+  instrumental:
+    - meaning
+    - growth
+  fundamental:
+    - truth
+    - fortune
+  delinquent:
+    - identity
+    - fiction
+
 aspect_direction:
   contract:
   - Time
@@ -64,15 +70,21 @@ aspect_direction:
   - Mind
   - Hope
 
-abstract_bisect:
-  The Abstract:
-    - meaning
-    - truth
-    - identity
-  The Material:
-    - growth
-    - fortune
-    - fiction
+classes:
+  - Thief
+  - Rogue
+  - Heir
+  - Knight
+  - Seer
+  - Mage
+  - Maid
+  - Sylph
+  - Bard
+  - Witch
+  - Page
+  - Prince
+  - Lord
+  - Muse
 
 class_rel:
   student:
@@ -96,29 +108,29 @@ class_rel:
   subsumee:
     - Muse
 
-aspect_nature:
-  instrumental:
-    - meaning
-    - growth
-  fundamental:
-    - truth
-    - fortune
-  delinquent:
-    - identity
-    - fiction
+classrel_activity:
+  active:
+    - agent
+    - operant
+    - subsumer
+  passive:
+    - student
+    - alterant
+    - subsumee
+
 
 class_nature:
-  intrinsic:
+  mutualist:
     - Thief
     - Rogue
     - Heir
     - Knight
-  extrinsic:
+  commensalist:
     - Seer
     - Mage
     - Maid
     - Sylph
-  victim:
+  parasitic:
     - Bard
     - Witch
     - Page

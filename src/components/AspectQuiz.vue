@@ -14,66 +14,58 @@
     </div>
   </div>
 
-  <div class="question" v-if="aspect_pick">
+  <div class="question">
     <p>
       What is your relationship with that theme?
     </p>
     <div class="col">
       <label :key="model" v-for="desc, model in {
-        'operant': `You <b>use</b> ${aspect_desc.toLowerCase()}`,
+        'alterant': `You <b>change and cultivate</b> ${aspect_desc.toLowerCase()}`,
+        'student': `You <b>are changed by</b> ${aspect_desc.toLowerCase()}`,
+        'operant': `You <b>use and manifest</b> ${aspect_desc.toLowerCase()}`,
         'agent': `You <b>are used by</b> ${aspect_desc.toLowerCase()}`,
-        'alterant': `You <b>change</b> ${aspect_desc.toLowerCase()}`,
-        'student': `You <b>are changed by</b> ${aspect_desc.toLowerCase()}`
-      }">
-        <input type="checkbox"
-          :checked.prop="relationship == model"
-          :disabled="masterclass_nature === true"
-          @click="relationship != model ? relationship = model : relationship = nature = undefined"
-        />
-        <span v-html="desc" />
-      </label>
-      <label :key="model" v-for="desc, model in {
         'subsumer': `You <b>subsume</b> ${aspect_desc.toLowerCase()}`,
         'subsumee': `You <b>are subsumed by</b> ${aspect_desc.toLowerCase()}`,
       }">
-        <input type="checkbox"
+        <!-- <input type="checkbox"
           :checked.prop="relationship == model"
-          :disabled="masterclass_nature === false"
-          @click="relationship != model ? relationship = model : relationship = nature = undefined"
+          :disabled="masterclass_nature === (!model.startsWith('subsum'))"
+          @click="relationship != model ? relationship = model : relationship = undefined"
+        /> -->
+        <input type="checkbox"
+          v-model="relationships"
+          :value="model"
         />
         <span v-html="desc" />
       </label>
     </div>
   </div>
 
-  <div class="question" v-if="aspect_pick">
+  <div class="question">
     <p>
       ...in a way that is:
     </p>
     <div class="col">
-      <label :key="model" v-for="model in [ 'intrinsic', 'extrinsic', 'victim' ]">
-        <input type="checkbox"
+      <label :key="model" v-for="model in [ 'mutualist', 'commensalist', 'parasitic', 'self' ]">
+        <!-- <input type="checkbox"
           :checked.prop="nature == model"
-          :disabled="masterclass_rel === true"
+          :disabled="masterclass_rel === (model != 'self')"
           @click="nature != model ? nature = model : nature = undefined"
-        />
-        {{ $t(`desc_${model}`) }}
-      </label>
-      <label :key="model" v-for="model in [ 'self' ]">
+        /> -->
         <input type="checkbox"
-          :checked.prop="nature == model"
-          :disabled="masterclass_rel === false"
-          @click="nature != model ? nature = model : nature = undefined"
+          v-model="natures"
+          :value="model"
         />
         {{ $t(`desc_${model}`) }}
       </label>
     </div>
   </div>
 
-  <!-- <pre v-text="{theme_rating, relationship, nature, aspect_pick, score_rating, class_pick}" /> -->
-  <div class="internal" v-if="aspect_pick && class_pick">
-    <ClasspectDisplay :class="class_pick" :aspect="aspect_pick" /> + {{confidence}}
-    <pre v-text="{aspect_pick, nature, relationship, class_pick}" />
+  <div class="internal">
+    <!-- <ClasspectDisplay v-for="class_pick in class_picks" :key="class_pick"
+      :class="class_pick" :aspect="aspect_pick" />
+    + {{aspect_confidence}} -->
+    <pre v-text="{aspect_picks, natures, relationships, class_picks}" />
   </div>
 </template>
 
@@ -81,6 +73,12 @@
 
 import data from "@/data.yaml";
 import ClasspectDisplay from "@/components/ClasspectDisplay.vue"
+
+const defaults = Object.freeze({
+  theme_rating: 2,
+  relationships: [],
+  natures: [],
+})
 
 export default {
   name: 'AspectQuiz',
@@ -90,14 +88,7 @@ export default {
   data: function() {
     return {
       data,
-      default: {
-        theme_rating: 2,
-        relationship: undefined,
-        nature: undefined,
-      },
-      theme_rating: 2,
-      relationship: undefined,
-      nature: undefined,
+      ...defaults
     }
   },
   watch: {
@@ -111,29 +102,48 @@ export default {
   },
   created() {
     let saved = this.Store[this.theme] || {}
-    this.relationship = saved.relationship || this.default.relationship
-    this.nature = saved.nature || this.default.nature
-    this.theme_rating = saved.theme_rating || this.default.theme_rating
+    this.relationships = saved.relationships || defaults.relationships
+    this.natures       = saved.natures       || defaults.natures
+    this.theme_rating  = saved.theme_rating === undefined ? defaults.theme_rating : saved.theme_rating // Treat zero as significant
   },
   methods: {
     save() {
       this.Store[this.theme] = {
-        relationship: this.relationship,
-        nature: this.nature,
+        relationships: this.relationships,
+        natures: this.natures,
         theme_rating: this.theme_rating
       }
     }
   },
   computed: {
     aspect_pair() { return data.aspect_pairs[this.theme] || ['Null', 'Nil'] },
-    aspect_pick() { return this.score_rating > 0 ? this.aspect_pair[Math.round(this.theme_rating/5)] : undefined },
-    aspect_desc() { return this.$t(`aspect_desc.${this.aspect_pick}`) },
-    score_rating() { return Math.abs(this.theme_rating-2) },
-    class_pick() {
-      var nature_opts = data.class_nature[this.nature] || []
-      var rel_opts = data.class_rel[this.relationship] || []
-      var filtered = nature_opts.filter(a => rel_opts.includes(a))
-      return filtered[0] || undefined
+    aspect_picks() {
+      if (this.score_rating > 0) {
+        return [this.aspect_pair[Math.round(this.theme_rating/5)]]
+      }
+      return this.aspect_pair
+    },
+    aspect_desc() {
+      if (this.aspect_picks.length > 1) {
+        return this.$t(`aspect_desc.${this.theme}`)
+      } else {
+        return this.$t(`aspect_desc.${this.aspect_picks[0]}`)
+      }
+    },
+    score_rating() { return Math.abs(this.theme_rating-2) }, // convert 0-5 to 0-2 or 0-2
+    class_picks() {
+      return this.relationships.map(relationship => {
+        return this.natures.map(nature => {
+          var nature_opts = data.class_nature[nature] || []
+          var rel_opts = data.class_rel[relationship] || []
+          // Filter class by nature vertically, relationship horizontally, meeting on one space
+          var filtered = nature_opts.filter(a => rel_opts.includes(a))
+          return filtered[0] || undefined
+        }).flat()
+      }).flat()
+      .filter(Boolean)
+
+      // return []
     },
     masterclass_nature() {
       if (this.nature == "self") return true
@@ -145,14 +155,15 @@ export default {
       else if (this.relationship) return false
       return undefined
     },
-    confidence() { return this.score_rating },
+    aspect_confidence() { return this.score_rating },
     overall_value() {
-      return {
-        aspect: this.aspect_pick,
-        class: this.class_pick,
-        confidence: this.confidence,
-        valid: (this.aspect_pick && this.class_pick && true)
-      }
+      return this.aspect_picks.map(a => this.class_picks.map(c => ({
+          aspect: a,
+          class: c,
+          aspect_confidence: this.aspect_confidence,
+          valid: (a && c && true)
+        })).flat()
+      ).flat()
     }
   },
 }

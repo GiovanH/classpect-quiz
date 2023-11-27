@@ -19,10 +19,6 @@ Object.keys(data.aspect_pairs).forEach(theme => {
   messages.en[`theme_${theme}`] = toTitleCase(theme)
 })
 
-messages.en[`theme_skip`] = '(skip)'
-messages.en[`picker_skip`] = '(skip)'
-messages.en[`desc_skip`] = '(skip)'
-
 messages.en['aspect_desc'] = {
   "Blood": "Established meaning, roots, connection to tradition",
   "Breath": "New meaning, novelty, disconnect from tradition",
@@ -36,20 +32,59 @@ messages.en['aspect_desc'] = {
   "Mind": "Bigger-picture meaning determined by systems, not the self" ,
   "Rage": "Unchecked destruction and hatred of falsehood ",
   "Hope": "Unchecked growth and the creation of the fake and inexplicable",
+  meaning: "Meaning, tradition, values",
+  growth: "Growth and the natural cycle of life",
+  truth: "Truth, mysteries, and relating to the unknown",
+  fortune: "Fortune, prosperity, fate, and failure",
+  identity: "Identity, relating the self to the world around them",
+  fiction: "Fiction, falsehood, and the cultivation or destruction of novelty",
 }
 
-messages.en['picker_instrumental'] = "Instrumentality, application"
-messages.en['picker_fundamental'] = "Fundamentals, natural forces"
-messages.en['picker_delinquent'] = "Subversion, mutation"
-
-messages.en['desc_intrinsic'] = `For your own advancement. Advancing my goals advances the narrative's goals.`
-messages.en['desc_extrinsic'] = `For the advancement of others. I advance the goals of others to advance the narrative's goals.`
-messages.en['desc_victim'] = `For/at the advancement of the narrative. The narrative advances its goals by actively acting in my detriment.`
+messages.en['desc_mutualist'] = `For your own advancement. Advancing my goals advances the narrative's goals.`
+messages.en['desc_commensalist'] = `For the advancement of others. I advance the goals of others to advance the narrative's goals.`
+messages.en['desc_parasitic'] = `For/at the advancement of the narrative. The narrative advances its goals by actively acting in my detriment.`
 messages.en['desc_self'] = `For the advancement of both the self and the narrative as one. My goals and the narrative's are inseperable. We are codependent on each other.`
 
-messages.en['desc_expand'] = "Expansion: Growth, life"
-messages.en['desc_contract'] = "Contraction: Definition, limitation"
+// Aspect pair abstraction
+messages.en['tuningprompt_abstractpairs_abstraction'] = "Which is more strongly linked to you?"
+messages.en['tuningdesc_abstract'] = "The abstract"
+messages.en['tuningdesc_material'] = "The material"
 
+// Aspect pair nature
+messages.en['tuningprompt_aspectpairs_nature'] = "Which tends to be your relationship with your aspect?"
+
+messages.en['tuningdesc_instrumental'] = "Instrumentality, application"
+messages.en['tuningdesc_fundamental'] = "Fundamentals, natural forces"
+messages.en['tuningdesc_delinquent'] = "Subversion, mutation"
+
+// Aspect direction
+messages.en['tuningprompt_aspect_direction'] = "Direction?"
+messages.en['tuningdesc_expand'] = "Expansion: Growth, life"
+messages.en['tuningdesc_contract'] = "Contraction: Definition, limitation"
+
+// Class nature
+messages.en['tuningprompt_class_nature'] = "Class Nature?"
+messages.en['tuningdesc_mutualist'] = messages.en['desc_mutualist']
+messages.en['tuningdesc_commensalist'] = messages.en['desc_commensalist']
+messages.en['tuningdesc_parasitic'] = messages.en['desc_parasitic']
+messages.en['tuningdesc_self'] = messages.en['desc_self']
+
+// Class relationships
+messages.en['tuningprompt_class_rel'] = "Relationship with your aspect?"
+messages.en['tuningdesc_student'] = "Changed by aspect in its service"
+messages.en['tuningdesc_alterant'] = "Changes aspect in its service"
+messages.en['tuningdesc_agent'] = "Used by aspect in its service"
+messages.en['tuningdesc_operant'] = "Uses aspect in its service"
+messages.en['tuningdesc_subsumer'] = "Subsumes aspect"
+messages.en['tuningdesc_subsumee'] = "Subsumed by aspect"
+
+// Classrel active/passive
+
+messages.en['tuningprompt_classrel_activity'] = "Which tends to be your nature?"
+messages.en['tuningdesc_active'] = "Active"
+messages.en['tuningdesc_passive'] = "Passive"
+
+messages.en[`tuningdesc_skip`] = '(skip)'
 
 const i18n = createI18n({
   locale: 'en', // set locale
