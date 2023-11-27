@@ -1,56 +1,77 @@
 <template>
-  <div :class="{hideInternal}">
+  <div :class="{hideInternal: !showInternal}">
     <span>
-      based entirely on <a href="https://archiveofourown.org/series/1960270">0pacifica's classpect meta</a>
+      based entirely on <a href="https://archiveofourown.org/series/1960270">0pacifica's classpect meta</a> and <a href="https://classpectanon.tumblr.com">classpectanon</a>'s <a href="https://docs.google.com/spreadsheets/d/1e1JDiyE2tp-5mkA75x5UIexUpJru8d8b1hjeSG7gqSE/edit#gid=0">table</a>
     </span>
-    <h1>Questions</h1>
-    <div class="quizContainer">
-      <div v-for="(aspects, theme) in data.aspect_pairs" :key="theme">
-        <AspectQuiz
-          :theme="theme"
-          @changed="v => quiz_inputs[theme] = Object.freeze(v)"
-        />
-      </div>
-    </div>
-
-    <div class="quizContainer">
-      <template v-for="tunemodels, tunekey in tuningopts">
-        <div :key="model" v-for="model in tunemodels">
-          <p>
-            {{ $t(`tuningprompt_${model}`) }}
-          </p>
-          <div class="col">
-            <label v-for="(v, choice) in {...data[model], skip: []}" :key="choice">
-              <input type="radio"
-                :value="v"
-                v-model="tuning[model]"
-              />
-              <span v-text="$t(`tuningdesc_${choice}`)" />
-            </label>
-          </div>
-          <div class="internal">
-            + 1 {{ tuning[model] }}
-          </div>
+    <section>
+      <h1>Questions</h1>
+      <div class="quizContainer">
+        <div v-for="(aspects, theme) in data.aspect_pairs" :key="theme">
+          <AspectQuiz
+            :enableMaster="enableMaster"
+            :theme="theme"
+            @changed="v => quiz_inputs[theme] = Object.freeze(v)"
+          />
         </div>
-      </template>
-    </div>
+      </div>
 
-    <h1>Results</h1>
-    <ol>
-      <li v-for="(res, i) in quiz_inputs_sorted" :key="res.theme" >
-        {{ res.confidence }} points
-        <ClasspectDisplay :class="res.class" :aspect="res.aspect" :big="i == 0 ? true : null" />
-        <pre class="internal" v-text="res.log" />
-      </li>
-    </ol>
-    <!-- <pre class="internal" v-text="quiz_inputs_sorted" /> -->
-    <label>
-      <input type="checkbox"
-        v-model="hideInternal"
-      />
-      Hide internal data
-    </label>
-    <button @click="cleardata">Clear all selections</button>
+      <div class="quizContainer">
+        <template v-for="tunemodels, tunekey in tuningopts">
+          <div :key="model" v-for="model in tunemodels">
+            <p>
+              {{ $t(`tuningprompt_${model}`) }}
+            </p>
+            <div class="col">
+              <label v-for="(v, choice) in {...data[model], skip: []}" :key="choice">
+                <input type="radio"
+                  :value="v"
+                  v-model="tuning[model]"
+                />
+                <span v-text="$t(`tuningdesc_${choice}`)" />
+              </label>
+            </div>
+            <div class="internal">
+              + 1 {{ tuning[model] }}
+            </div>
+          </div>
+        </template>
+      </div>
+    </section>
+
+    <section>
+      <h1>Results</h1>
+      <ol>
+        <li v-for="(res, i) in quiz_inputs_sorted" :key="res.theme" >
+          {{ res.confidence }} points
+          <ClasspectDisplay :class="res.class" :aspect="res.aspect" :big="false && i == 0 ? true : null" />
+          <pre class="internal" v-text="res.log" />
+        </li>
+      </ol>
+    </section>
+    <section>
+      <h1>How it Works</h1>
+      <p>Each of the first six question boxes corresponds to an <b>aspect dichotomy</b>. Which aspect you get in the dichotomy corresponds to which side of the scale you put the rating.</p>
+      <p>The following questions in the first six boxes pertain to your relationship with that aspect, and assign aspect-specific <b>classes</b> depending on your answer. So, ultimately, each of the first six boxes yields a <b>list of possible classpects</b>.</p>
+      <p>Then each of those classpects are <b>ranked</b> depending on how well they apply. The score is based on your <b>confidence</b> in the dichotomy choice (how far to one side you ranked it) and your answers to the tuning questions, which each assign point bonuses to certain classes or aspects.</p>
+    </section>
+    <section>
+      <h1>Settings</h1>
+      <div class="col">
+        <label>
+          <input type="checkbox"
+            v-model="enableMaster"
+          />
+          Enable master classes
+        </label>
+        <label>
+          <input type="checkbox"
+            v-model="showInternal"
+          />
+          Show internal data
+        </label>
+        <button @click="cleardata">Clear all selections</button>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -77,9 +98,18 @@
     border: 2px solid black;
     margin: 2px;
     padding: 0.5em;
-    h2 {
+    > *:first-child {
       margin-top: 0;
     }
+  }
+}
+label {
+
+  text-indent: -24px;
+  margin-left: 24px;
+  input[type="checkbox"] {
+    width: 13px;
+    margin: 3px 3px 3px 4px;
   }
 }
 </style>
@@ -95,7 +125,8 @@ export default {
   components: { AspectQuiz, ClasspectDisplay },
   data: function() {
     return {
-      hideInternal: true,
+      showInternal: false,
+      enableMaster: false,
       data: data,
       quiz_inputs: {},
       tuning: {},

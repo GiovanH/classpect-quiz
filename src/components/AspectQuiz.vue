@@ -2,7 +2,7 @@
   <h2 v-text="$t(`theme_${theme}`)" />
   <div class="question">
     <p>
-      Which of these two sides of <i>{{ theme }}</i> do you have the <b>strongest</b> connection to?
+      Which of these two sides of <i>{{ theme }}</i> do they have the <b>strongest</b> connection to?
     </p>
 
     <div class="row">
@@ -16,17 +16,25 @@
 
   <div class="question">
     <p>
-      What is your relationship with that theme?
+      What is their relationship with that theme?
     </p>
     <div class="col">
-      <label :key="model" v-for="desc, model in {
-        'alterant': `You <b>change and cultivate</b> ${aspect_desc.toLowerCase()}`,
-        'student': `You <b>are changed by</b> ${aspect_desc.toLowerCase()}`,
-        'operant': `You <b>use and manifest</b> ${aspect_desc.toLowerCase()}`,
-        'agent': `You <b>are used by</b> ${aspect_desc.toLowerCase()}`,
-        'subsumer': `You <b>subsume</b> ${aspect_desc.toLowerCase()}`,
-        'subsumee': `You <b>are subsumed by</b> ${aspect_desc.toLowerCase()}`,
-      }">
+      <!-- <label :key="model" v-for="desc, model in Object.entries({
+        'alterant': `They <b>change and cultivate</b> ${aspect_desc.toLowerCase()}`,
+        'student': `They <b>are changed by</b> ${aspect_desc.toLowerCase()}`,
+        'operant': `They <b>use and manifest</b> ${aspect_desc.toLowerCase()}`,
+        'agent': `They <b>are used by</b> ${aspect_desc.toLowerCase()}`,
+        'subsumer': `They <b>subsume</b> ${aspect_desc.toLowerCase()}`,
+        'subsumee': `They <b>are subsumed by</b> ${aspect_desc.toLowerCase()}`,
+      }"> -->
+      <label :key="model" v-for="model in [
+        'alterant',
+        'student',
+        'operant',
+        'agent',
+        'subsumer',
+        'subsumee',
+      ].filter(model => !(model.startsWith('subsum') && !enableMaster))">
         <!-- <input type="checkbox"
           :checked.prop="relationship == model"
           :disabled="masterclass_nature === (!model.startsWith('subsum'))"
@@ -36,7 +44,7 @@
           v-model="relationships"
           :value="model"
         />
-        <span v-html="desc" />
+        <span v-html="`${$t(`classrel_${model}`)} ${aspect_desc.toLowerCase()}`" />
       </label>
     </div>
   </div>
@@ -46,7 +54,7 @@
       ...in a way that is:
     </p>
     <div class="col">
-      <label :key="model" v-for="model in [ 'mutualist', 'commensalist', 'parasitic', 'self' ]">
+      <label :key="model" v-for="model in [ 'mutualist', 'commensalist', 'parasitic', 'self' ].filter(model => !(model == 'self' && !enableMaster))">
         <!-- <input type="checkbox"
           :checked.prop="nature == model"
           :disabled="masterclass_rel === (model != 'self')"
@@ -82,8 +90,8 @@ const defaults = Object.freeze({
 
 export default {
   name: 'AspectQuiz',
-  components: { ClasspectDisplay },
-  props: [ 'theme' ],
+  // components: { ClasspectDisplay },
+  props: [ 'theme', 'enableMaster' ],
   emits: [ 'changed' ],
   data: function() {
     return {

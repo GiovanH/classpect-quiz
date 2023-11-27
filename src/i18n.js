@@ -40,37 +40,44 @@ messages.en['aspect_desc'] = {
   fiction: "Fiction, falsehood, and the cultivation or destruction of novelty",
 }
 
-messages.en['desc_mutualist'] = `For your own advancement. Advancing my goals advances the narrative's goals.`
-messages.en['desc_commensalist'] = `For the advancement of others. I advance the goals of others to advance the narrative's goals.`
-messages.en['desc_parasitic'] = `For/at the advancement of the narrative. The narrative advances its goals by actively acting in my detriment.`
-messages.en['desc_self'] = `For the advancement of both the self and the narrative as one. My goals and the narrative's are inseperable. We are codependent on each other.`
+messages.en['classrel_alterant'] = `They <b>change and cultivate</b> `
+messages.en['classrel_student'] = `They <b>are changed by</b>`
+messages.en['classrel_operant'] = `They <b>use and manifest</b>`
+messages.en['classrel_agent'] = `They <b>are used by</b> `
+messages.en['classrel_subsumer'] = `They <b>subsume</b>`
+messages.en['classrel_subsumee'] = `They <b>are subsumed by</b>`
+
+messages.en['desc_mutualist'] = `For their own advancement. Them advancing their own goals advances the narrative's goals.`
+messages.en['desc_commensalist'] = `For the advancement of others. They advance the goals of others to advance the narrative's goals.`
+messages.en['desc_parasitic'] = `For/at the advancement of the narrative. The narrative advances its goals by actively acting in their detriment.`
+messages.en['desc_self'] = `For the advancement of both the self and the narrative as one. Their goals and the narrative's are inseperable and they are codependent on each other.`
 
 // Aspect pair abstraction
-messages.en['tuningprompt_abstractpairs_abstraction'] = "Which is more strongly linked to you?"
+messages.en['tuningprompt_abstractpairs_abstraction'] = "Which is more strongly linked to them?"
 messages.en['tuningdesc_abstract'] = "The abstract"
 messages.en['tuningdesc_material'] = "The material"
 
 // Aspect pair nature
-messages.en['tuningprompt_aspectpairs_nature'] = "Which tends to be your relationship with your aspect?"
+messages.en['tuningprompt_aspectpairs_nature'] = "Which tends to be their focus?"
 
 messages.en['tuningdesc_instrumental'] = "Instrumentality, application"
 messages.en['tuningdesc_fundamental'] = "Fundamentals, natural forces"
 messages.en['tuningdesc_delinquent'] = "Subversion, mutation"
 
 // Aspect direction
-messages.en['tuningprompt_aspect_direction'] = "Direction?"
+messages.en['tuningprompt_aspect_direction'] = "In what direction are they focused?"
 messages.en['tuningdesc_expand'] = "Expansion: Growth, life"
 messages.en['tuningdesc_contract'] = "Contraction: Definition, limitation"
 
 // Class nature
-messages.en['tuningprompt_class_nature'] = "Class Nature?"
+messages.en['tuningprompt_class_nature'] = "Which tends to be their relationship with their aspect?"
 messages.en['tuningdesc_mutualist'] = messages.en['desc_mutualist']
 messages.en['tuningdesc_commensalist'] = messages.en['desc_commensalist']
 messages.en['tuningdesc_parasitic'] = messages.en['desc_parasitic']
 messages.en['tuningdesc_self'] = messages.en['desc_self']
 
 // Class relationships
-messages.en['tuningprompt_class_rel'] = "Relationship with your aspect?"
+messages.en['tuningprompt_class_rel'] = "Which tends to be their relationship with their aspect?"
 messages.en['tuningdesc_student'] = "Changed by aspect in its service"
 messages.en['tuningdesc_alterant'] = "Changes aspect in its service"
 messages.en['tuningdesc_agent'] = "Used by aspect in its service"
@@ -80,7 +87,7 @@ messages.en['tuningdesc_subsumee'] = "Subsumed by aspect"
 
 // Classrel active/passive
 
-messages.en['tuningprompt_classrel_activity'] = "Which tends to be your nature?"
+messages.en['tuningprompt_classrel_activity'] = "Which tends to be their nature?"
 messages.en['tuningdesc_active'] = "Active"
 messages.en['tuningdesc_passive'] = "Passive"
 
